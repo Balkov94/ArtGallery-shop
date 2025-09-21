@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff ,Lock} from 'lucide-react';
 
 interface PasswordInputProps {
   id: string;
@@ -44,6 +44,7 @@ export function PasswordInput({
 
   return (
     <div className="relative">
+      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
       <input
         type={showPassword ? "text" : "password"}
         id={id}
