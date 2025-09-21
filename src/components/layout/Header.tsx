@@ -1,14 +1,24 @@
 import React from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Palette, ShoppingCart, User, Menu } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function Header() {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, signOut, loading } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
   
   const isActive = (path: string) => location.pathname === path;
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      setShowUserMenu(false);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,12 +73,43 @@ export function Header() {
             </button>
             
             {user ? (
-              <Link 
-                to="/profile" 
-                className="p-2 text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <User className="h-5 w-5" />
-              </Link>
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 p-2 text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="hidden sm:block text-sm font-medium">
+                    {user.email?.split('@')[0]}
+                  </span>
+                </button>
+                
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/favorites"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Favorites
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      disabled={loading}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      {loading ? 'Signing out...' : 'Sign Out'}
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link 
                 to="/auth" 
@@ -84,6 +125,14 @@ export function Header() {
             </button>
           </div>
         </div>
+        
+        {/* Click outside to close user menu */}
+        {showUserMenu && (
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setShowUserMenu(false)}
+          />
+        )}
       </div>
     </header>
   );

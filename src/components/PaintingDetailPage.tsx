@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle, ShoppingCart, Star, Send, AlertCircle, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useAuthAction } from '../hooks/useAuthRedirect';
+import { ProtectedAction } from './auth/ProtectedAction';
 import { dbHelpers } from '../lib/supabase';
 import { LoadingSpinner } from './ui/LoadingSpinner';
 import { Painting, Comment } from '../types';
@@ -21,6 +23,7 @@ interface InteractionState {
 
 export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
   const { user } = useAuth();
+  const { requireAuthForAction } = useAuthAction();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
@@ -80,7 +83,7 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
   }, [picture.id, user]);
 
   const handleLike = async () => {
-    if (!user || interactions.isLikeLoading) return;
+    if (!requireAuthForAction('like this painting') || interactions.isLikeLoading) return;
 
     setInteractions(prev => ({ ...prev, isLikeLoading: true }));
 
@@ -117,7 +120,7 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
   };
 
   const handleFavorite = async () => {
-    if (!user || interactions.isFavoriteLoading) return;
+    if (!requireAuthForAction('add to favorites') || interactions.isFavoriteLoading) return;
 
     setInteractions(prev => ({ ...prev, isFavoriteLoading: true }));
 
@@ -147,7 +150,7 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !newComment.trim() || isCommentSubmitting) return;
+    if (!requireAuthForAction('post a comment') || !newComment.trim() || isCommentSubmitting) return;
 
     // Validate comment
     if (newComment.trim().length < 3) {
@@ -247,8 +250,19 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
           </div>
 
           {/* Interactive Buttons */}
-          {user ? (
-            <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3">
+            <ProtectedAction 
+              actionName="purchase this painting"
+              fallback={
+                <button
+                  disabled
+                  className="flex-1 min-w-[200px] bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold cursor-not-allowed flex items-center justify-center"
+                >
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Sign in to Purchase
+                </button>
+              }
+            >
               <button
                 disabled={!picture.isAvailable}
                 className="flex-1 min-w-[200px] bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
@@ -256,7 +270,21 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 {picture.isAvailable ? 'Add to Basket' : 'Sold Out'}
               </button>
+            </ProtectedAction>
 
+            <ProtectedAction 
+              actionName="like this painting"
+              showLoginPrompt={false}
+              fallback={
+                <button
+                  onClick={() => requireAuthForAction('like this painting')}
+                  className="px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  <Heart className="h-5 w-5" />
+                  <span>{interactions.likesCount}</span>
+                </button>
+              }
+            >
               <button
                 onClick={handleLike}
                 disabled={interactions.isLikeLoading}
@@ -273,7 +301,20 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
                 )}
                 <span>{interactions.likesCount}</span>
               </button>
+            </ProtectedAction>
 
+            <ProtectedAction 
+              actionName="add to favorites"
+              showLoginPrompt={false}
+              fallback={
+                <button
+                  onClick={() => requireAuthForAction('add to favorites')}
+                  className="px-4 py-3 rounded-lg font-medium transition-colors flex items-center bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  <Star className="h-5 w-5" />
+                </button>
+              }
+            >
               <button
                 onClick={handleFavorite}
                 disabled={interactions.isFavoriteLoading}
@@ -289,17 +330,8 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
                   <Star className={`h-5 w-5 ${interactions.isFavorited ? 'fill-current' : ''}`} />
                 )}
               </button>
-            </div>
-          ) : (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-blue-800 mb-3">
-                Please log in to interact with this painting and leave comments.
-              </p>
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                Sign In
-              </button>
-            </div>
-          )}
+            </ProtectedAction>
+          </div>
         </div>
       </div>
 
@@ -313,7 +345,20 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
         </div>
 
         {/* New Comment Form */}
-        {user ? (
+        <ProtectedAction 
+          actionName="post a comment"
+          fallback={
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8 text-center">
+              <p className="text-gray-600 mb-3">Please log in to leave a comment.</p>
+              <button 
+                onClick={() => requireAuthForAction('post a comment')}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Sign In to Comment
+              </button>
+            </div>
+          }
+        >
           <form onSubmit={handleCommentSubmit} className="mb-8">
             <div className="bg-white border border-gray-300 rounded-lg p-4">
               <textarea
@@ -347,11 +392,7 @@ export function PaintingDetailPage({ picture }: PaintingDetailPageProps) {
               </div>
             </div>
           </form>
-        ) : (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8 text-center">
-            <p className="text-gray-600">Please log in to leave a comment.</p>
-          </div>
-        )}
+        </ProtectedAction>
 
         {/* Comments List */}
         {isCommentsLoading ? (
