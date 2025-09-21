@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { Palette, Mail, Lock, User } from 'lucide-react';
+import { Palette, Mail, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePostAuthRedirect } from '../hooks/useAuthRedirect';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
+import { PasswordInput } from '../components/ui/PasswordInput';
 
 export function Auth() {
   usePostAuthRedirect(); // Handle redirect after successful auth
@@ -165,19 +166,17 @@ export function Auth() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter your password"
-                required
-                minLength={6}
-              />
-            </div>
+            <PasswordInput
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              minLength={6}
+              disabled={loading}
+              autoComplete={isLogin ? "current-password" : "new-password"}
+              aria-label="Password"
+            />
           </div>
 
           <button

@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -125,6 +124,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else {
         console.log('Sign out successful');
         // User will be cleared via onAuthStateChange listener
+        // Redirect to homepage after successful sign out
+        window.location.href = '/';
       }
     } catch (error) {
       console.error('Sign out error:', error);
