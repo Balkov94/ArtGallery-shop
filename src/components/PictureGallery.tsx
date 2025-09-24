@@ -1,14 +1,14 @@
 import React from 'react';
 import { AlertCircle, RefreshCw, Image as ImageIcon } from 'lucide-react';
-import { usePictures } from '../hooks/usePictures';
+import { usePaintings } from '../hooks/usePaintings';
 import { LoadingSpinner } from './ui/LoadingSpinner';
-import { Picture } from '../types';
+import { Painting } from '../types';
 
-interface PictureCardProps {
-  picture: Picture;
+interface PaintingCardProps {
+  painting: Painting;
 }
 
-function PictureCard({ picture }: PictureCardProps) {
+function PaintingCard({ painting }: PaintingCardProps) {
   const [imageLoaded, setImageLoaded] = React.useState(false);
   const [imageError, setImageError] = React.useState(false);
 
@@ -45,8 +45,8 @@ function PictureCard({ picture }: PictureCardProps) {
           </div>
         ) : (
           <img
-            src={picture.image_url}
-            alt={picture.description}
+            src={painting.imageUrl}
+            alt={painting.title}
             className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
@@ -59,10 +59,10 @@ function PictureCard({ picture }: PictureCardProps) {
       
       <div className="p-4">
         <p className="text-gray-800 font-medium mb-2 line-clamp-2">
-          {picture.description}
+          {painting.title}
         </p>
         <p className="text-2xl font-bold text-blue-600">
-          {formatPrice(picture.price_eur)}
+          {formatPrice(painting.price)}
         </p>
       </div>
     </div>
@@ -74,7 +74,7 @@ interface PictureGalleryProps {
 }
 
 export function PictureGallery({ className = '' }: PictureGalleryProps) {
-  const { pictures, loading, error, refetch } = usePictures();
+  const { paintings, loading, error, refetch } = usePaintings();
 
   if (loading) {
     return (
@@ -108,13 +108,13 @@ export function PictureGallery({ className = '' }: PictureGalleryProps) {
     );
   }
 
-  if (pictures.length === 0) {
+  if (paintings.length === 0) {
     return (
       <div className={`flex justify-center items-center min-h-[400px] ${className}`}>
         <div className="text-center">
           <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            No Pictures Found
+            No Paintings Found
           </h3>
           <p className="text-gray-600">The gallery is currently empty.</p>
         </div>
@@ -126,17 +126,17 @@ export function PictureGallery({ className = '' }: PictureGalleryProps) {
     <div className={className}>
       <div className="mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-          Picture Gallery
+          Painting Gallery
         </h2>
         <p className="text-gray-600">
-          Discover our collection of {pictures.length} beautiful pictures
+          Discover our collection of {paintings.length} beautiful paintings
         </p>
       </div>
       
       {/* Responsive Grid Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {pictures.map((picture) => (
-          <PictureCard key={picture.id} picture={picture} />
+        {paintings.map((painting) => (
+          <PaintingCard key={painting.id} painting={painting} />
         ))}
       </div>
     </div>
