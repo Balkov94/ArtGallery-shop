@@ -37,6 +37,26 @@ export const authHelpers = {
 
 // Database helper functions
 export const dbHelpers = {
+  // Pictures
+  getPictures: async () => {
+    const { data, error } = await supabase
+      .from('pictures')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    return { data, error };
+  },
+
+  getPictureById: async (id: string) => {
+    const { data, error } = await supabase
+      .from('pictures')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    return { data, error };
+  },
+
   // Paintings
   getPaintings: async () => {
     const { data, error } = await supabase

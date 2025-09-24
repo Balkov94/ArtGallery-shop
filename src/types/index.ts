@@ -1,4 +1,12 @@
 // Core application types
+export interface Picture {
+  id: string;
+  image_url: string;
+  description: string;
+  price_eur: number;
+  created_at: string;
+}
+
 export interface Painting {
   id: string;
   title: string;

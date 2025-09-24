@@ -42,15 +42,17 @@ export function Home() {
           </div>
           
           {/* Placeholder for featured paintings grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="bg-gray-100 aspect-square rounded-lg flex items-center justify-center group hover:shadow-lg transition-shadow">
-                <div className="text-center">
-                  <Palette className="h-12 w-12 text-gray-400 mx-auto mb-4 group-hover:text-blue-600 transition-colors" />
-                  <p className="text-gray-500">Featured Painting {item}</p>
+          <div className="mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="bg-gray-100 aspect-[4/3] rounded-lg flex items-center justify-center group hover:shadow-lg transition-shadow">
+                  <div className="text-center">
+                    <Palette className="h-12 w-12 text-gray-400 mx-auto mb-4 group-hover:text-blue-600 transition-colors" />
+                    <p className="text-gray-500">Featured Picture {item}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           
           <div className="text-center">
