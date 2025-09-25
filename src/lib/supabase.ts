@@ -115,6 +115,46 @@ export const dbHelpers = {
     return { data, error };
   },
 
+  // Picture upload and management
+  uploadPicture: async (file: File) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('pictures')
+      .upload(filePath, file);
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('pictures')
+      .getPublicUrl(filePath);
+
+    return { data: { path: filePath, publicUrl }, error: null };
+  },
+
+  addPainting: async (paintingData: {
+    title: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+    thumbnailUrl: string;
+    dimensions?: string;
+    medium?: string;
+  }) => {
+    const { data, error } = await supabase
+      .from('paintings')
+      .insert([paintingData])
+      .select()
+      .single();
+    
+    return { data, error };
+  },
+
   // Likes operations
   getPaintingLikes: async (paintingId: string) => {
     const { data, error } = await supabase

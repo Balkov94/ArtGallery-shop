@@ -1,7 +1,9 @@
 import React from 'react';
-import { AlertCircle, RefreshCw, Image as ImageIcon } from 'lucide-react';
+import { AlertCircle, RefreshCw, Image as ImageIcon, Plus } from 'lucide-react';
 import { usePaintings } from '../hooks/usePaintings';
+import { useAuth } from '../contexts/AuthContext';
 import { LoadingSpinner } from './ui/LoadingSpinner';
+import { AddPictureForm } from './AddPictureForm';
 import { Painting } from '../types';
 
 interface PaintingCardProps {
@@ -75,6 +77,13 @@ interface PictureGalleryProps {
 
 export function PictureGallery({ className = '' }: PictureGalleryProps) {
   const { paintings, loading, error, refetch } = usePaintings();
+  const { user } = useAuth();
+  const [showAddForm, setShowAddForm] = React.useState(false);
+
+  const handleAddSuccess = () => {
+    setShowAddForm(false);
+    refetch(); // Refresh the gallery to show the new picture
+  };
 
   if (loading) {
     return (
@@ -122,15 +131,38 @@ export function PictureGallery({ className = '' }: PictureGalleryProps) {
     );
   }
 
+  if (showAddForm) {
+    return (
+      <div className={className}>
+        <AddPictureForm 
+          onSuccess={handleAddSuccess}
+          onCancel={() => setShowAddForm(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
-      <div className="mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-          Painting Gallery
-        </h2>
-        <p className="text-gray-600">
-          Discover our collection of {paintings.length} beautiful paintings
-        </p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+            Painting Gallery
+          </h2>
+          <p className="text-gray-600">
+            Discover our collection of {paintings.length} beautiful paintings
+          </p>
+        </div>
+        
+        {user && (
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center sm:justify-start"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Add New Picture
+          </button>
+        )}
       </div>
       
       {/* Responsive Grid Layout */}

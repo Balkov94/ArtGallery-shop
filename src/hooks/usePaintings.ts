@@ -11,6 +11,7 @@ export function usePaintings() {
     const fetchPaintings = async () => {
       try {
         setLoading(true);
+        setError(null);
         const { data, error } = await dbHelpers.getPaintings();
         
         if (error) {
@@ -28,7 +29,11 @@ export function usePaintings() {
     fetchPaintings();
   }, []);
 
-  return { paintings, loading, error, refetch: () => window.location.reload() };
+  const refetch = async () => {
+    await fetchPaintings();
+  };
+
+  return { paintings, loading, error, refetch };
 }
 
 export function usePainting(id: string) {
