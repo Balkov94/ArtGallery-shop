@@ -61,7 +61,19 @@ export const dbHelpers = {
   getPaintings: async () => {
     const { data, error } = await supabase
       .from('paintings')
-      .select('*')
+      .select(`
+        id,
+        title,
+        description,
+        price,
+        imageUrl,
+        thumbnailUrl,
+        dimensions,
+        medium,
+        isAvailable,
+        createdAt,
+        updatedAt
+      `)
       .eq('isAvailable', true)
       .order('createdAt', { ascending: false });
     
@@ -71,7 +83,19 @@ export const dbHelpers = {
   getPaintingById: async (id: string) => {
     const { data, error } = await supabase
       .from('paintings')
-      .select('*')
+      .select(`
+        id,
+        title,
+        description,
+        price,
+        imageUrl,
+        thumbnailUrl,
+        dimensions,
+        medium,
+        isAvailable,
+        createdAt,
+        updatedAt
+      `)
       .eq('id', id)
       .single();
     
