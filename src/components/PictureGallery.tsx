@@ -147,10 +147,10 @@ export function PictureGallery({ className = '' }: PictureGalleryProps) {
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Painting Gallery
+            Picture Gallery
           </h2>
           <p className="text-gray-600">
-            Discover our collection of {paintings.length} beautiful paintings
+            Discover our collection of {paintings.length} beautiful pictures
           </p>
         </div>
         

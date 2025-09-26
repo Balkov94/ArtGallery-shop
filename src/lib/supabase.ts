@@ -118,7 +118,7 @@ export const dbHelpers = {
   // Picture upload and management
   uploadPicture: async (file: File) => {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
     const filePath = `${fileName}`;
 
     const { data, error } = await supabase.storage
@@ -137,7 +137,7 @@ export const dbHelpers = {
     return { data: { path: filePath, publicUrl }, error: null };
   },
 
-  addPainting: async (paintingData: {
+  addPicture: async (pictureData: {
     title: string;
     description: string;
     price: number;
@@ -148,7 +148,7 @@ export const dbHelpers = {
   }) => {
     const { data, error } = await supabase
       .from('paintings')
-      .insert([paintingData])
+      .insert([pictureData])
       .select()
       .single();
     

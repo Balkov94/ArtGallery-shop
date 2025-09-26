@@ -132,14 +132,14 @@ export function AddPictureForm({ onSuccess, onCancel }: AddPictureFormProps) {
         title: formData.title.trim(),
         description: formData.description.trim(),
         price: parseFloat(formData.price),
-        imageUrl: uploadData.publicUrl,
-        thumbnailUrl: uploadData.publicUrl, // Using same URL for thumbnail
+        imageUrl: uploadData!.publicUrl,
+        thumbnailUrl: uploadData!.publicUrl, // Using same URL for thumbnail
         dimensions: formData.dimensions.trim() || 'Not specified',
         medium: formData.medium.trim() || 'Not specified',
       };
 
       // Save to database
-      const { error: dbError } = await dbHelpers.addPainting(paintingData);
+      const { error: dbError } = await dbHelpers.addPicture(paintingData);
       
       if (dbError) {
         throw new Error(dbError.message);
