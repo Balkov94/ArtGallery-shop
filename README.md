@@ -166,9 +166,12 @@ To complete the application, you'll need to:
 
 This project is licensed under the MIT License.
 
-Auth is broken...
-
-Test user for login
-
+********************************
+1.Clone repo
+2.npm istall
+3.Port - http://localhost:5173/
+test user:
 balkov_94@abv.bg
 password: NikBal123!
+
+or you can create your user - have to verify email address
