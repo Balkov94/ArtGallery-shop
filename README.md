@@ -165,3 +165,10 @@ To complete the application, you'll need to:
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+Auth is broken...
+
+Test user for login
+
+balkov_94@abv.bg
+password: NikBal123!
